@@ -82,6 +82,26 @@ export const saveLocalDb = (db: DatabaseSchema) => {
   }).catch(() => {
     // Graceful catch for static environments like Vercel
   });
+
+  // Background silent auto-sync to GitHub if configured and enabled
+  try {
+    const gh = getGitHubSyncSettings();
+    if (gh.enabled && gh.token && gh.repo) {
+      syncDatabaseToGitHub(db, gh)
+        .then(res => {
+          if (res.success) {
+            console.log('Successfully auto-synced database to GitHub!');
+          } else {
+            console.warn('Background GitHub auto-sync failed:', res.error);
+          }
+        })
+        .catch(err => {
+          console.warn('Background GitHub auto-sync network error:', err);
+        });
+    }
+  } catch (err) {
+    console.warn('Could not run GitHub auto-sync checks:', err);
+  }
 };
 
 // Helper to merge local database with server database to avoid overwriting or losing changes
@@ -604,3 +624,102 @@ export const createStripePortalSession = async (
     return { error: 'Kopplingsfel mot portalen.' };
   }
 };
+
+// =========================================================================
+//            GITHUB DIRECT REPOSITORY SYNCHRONIZATION UTILITIES
+// =========================================================================
+
+export interface GitHubSyncSettings {
+  token: string;
+  repo: string;
+  branch: string;
+  enabled: boolean;
+}
+
+const GITHUB_KEYS = {
+  SETTINGS: 'github_sync_settings_v1'
+};
+
+export const getGitHubSyncSettings = (): GitHubSyncSettings => {
+  try {
+    const raw = localStorage.getItem(GITHUB_KEYS.SETTINGS);
+    if (raw) {
+      return JSON.parse(raw);
+    }
+  } catch {}
+  return { token: '', repo: '', branch: 'main', enabled: false };
+};
+
+export const saveGitHubSyncSettings = (settings: GitHubSyncSettings) => {
+  try {
+    localStorage.setItem(GITHUB_KEYS.SETTINGS, JSON.stringify(settings));
+  } catch (e) {
+    console.error('Failed to save GitHub settings', e);
+  }
+};
+
+export const syncDatabaseToGitHub = async (
+  db: DatabaseSchema,
+  settings: GitHubSyncSettings
+): Promise<{ success: boolean; error?: string }> => {
+  if (!settings.token || !settings.repo || !settings.branch) {
+    return { success: false, error: 'GitHub credentials are incomplete. Please configure them in settings.' };
+  }
+
+  const cleanRepo = settings.repo.trim().replace(/\/$/, '');
+  const cleanBranch = settings.branch.trim() || 'main';
+  const filePath = 'src/data/db.json';
+  const url = `https://api.github.com/repos/${cleanRepo}/contents/${filePath}`;
+
+  try {
+    // 1. Get current file sha from GitHub if it exists
+    let sha: string | undefined;
+    const getRes = await fetch(`${url}?ref=${cleanBranch}`, {
+      headers: {
+        'Authorization': `token ${settings.token}`,
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+
+    if (getRes.ok) {
+      const fileData = await getRes.json();
+      sha = fileData.sha;
+    }
+
+    // 2. Prepare payload
+    const jsonString = JSON.stringify(db, null, 2);
+    // Use standard btoa encoding wrapped in encodeURIComponent for safe unicode conversion
+    const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+
+    const payload = {
+      message: `Automatic database sync from Modellportföljen Administrator Panel [${new Date().toISOString().slice(0, 10)}]`,
+      content: base64Content,
+      sha,
+      branch: cleanBranch
+    };
+
+    // 3. Put updated file content
+    const putRes = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${settings.token}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (putRes.ok) {
+      return { success: true };
+    } else {
+      const errorData = await putRes.json().catch(() => ({}));
+      return { 
+        success: false, 
+        error: errorData.message || `GitHub API returned status ${putRes.status}` 
+      };
+    }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Network error occurred during GitHub synchronization.' };
+  }
+};
+

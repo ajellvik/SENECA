@@ -24,7 +24,10 @@ import {
   X,
   Cpu,
   MessageSquare,
-  Search
+  Search,
+  Github,
+  GitBranch,
+  CloudLightning
 } from 'lucide-react';
 import { PortfolioHolding, TradeHistory, Profile, Portfolio, PortfolioHistory } from '../types';
 import { 
@@ -35,7 +38,10 @@ import {
   editHolding,
   deleteHolding,
   updateAppSettings,
-  getLocalDb
+  getLocalDb,
+  getGitHubSyncSettings,
+  saveGitHubSyncSettings,
+  syncDatabaseToGitHub
 } from '../data/mockData';
 
 interface AdminPanelProps {
@@ -71,7 +77,7 @@ export default function AdminPanel({
   const isAdmin = currentUser?.email.toLowerCase() === 'admin@modelportfolio.se';
 
   // State managers
-  const [activeTab, setActiveTabState] = useState<'trades' | 'weekly' | 'new_portfolio' | 'llm'>('trades');
+  const [activeTab, setActiveTabState] = useState<'trades' | 'weekly' | 'new_portfolio' | 'llm' | 'deployment'>('trades');
   const [selectedPortfolioId, setSelectedPortfolioId] = useState<string>('p1');
   const [successMsg, setSuccessMsg] = useState('');
   const [formError, setFormError] = useState('');
@@ -141,7 +147,7 @@ export default function AdminPanel({
   const [holdingToDelete, setHoldingToDelete] = useState<PortfolioHolding | null>(null);
 
   // Setter wrapper to clear form errors on tab switch
-  const setActiveTab = (tab: 'trades' | 'weekly' | 'new_portfolio' | 'llm') => {
+  const setActiveTab = (tab: 'trades' | 'weekly' | 'new_portfolio' | 'llm' | 'deployment') => {
     setFormError('');
     setActiveTabState(tab);
   };
@@ -177,6 +183,55 @@ export default function AdminPanel({
   const [pTier, setPTier] = useState<'none' | 'small' | 'mid' | 'large'>('small');
   const [pDescription, setPDescription] = useState('');
   const [pCurrency, setPCurrency] = useState('SEK');
+
+  // Form states 4: GitHub Autonomous Deployment Sync Settings
+  const [ghSyncSettings, setGhSyncSettings] = useState<{
+    token: string;
+    repo: string;
+    branch: string;
+    enabled: boolean;
+  }>({ token: '', repo: '', branch: 'main', enabled: false });
+  const [isSavingGhSync, setIsSavingGhSync] = useState(false);
+
+  // Hook to load GitHub Sync Settings
+  useEffect(() => {
+    const loaded = getGitHubSyncSettings();
+    setGhSyncSettings(loaded);
+  }, []);
+
+  const handleToggleGitHubSync = () => {
+    const updated = { ...ghSyncSettings, enabled: !ghSyncSettings.enabled };
+    setGhSyncSettings(updated);
+    saveGitHubSyncSettings(updated);
+    showBanner(`GitHub direct auto-sync is now ${updated.enabled ? 'ENABLED' : 'DISABLED'}.`);
+  };
+
+  const handleSaveAndTestSyncSettings = async () => {
+    if (!ghSyncSettings.token || !ghSyncSettings.repo) {
+      setFormError('GitHub Token and Repository path are required.');
+      return;
+    }
+
+    setIsSavingGhSync(true);
+    setFormError('');
+    setSuccessMsg('');
+
+    try {
+      saveGitHubSyncSettings(ghSyncSettings);
+      const db = getLocalDb();
+      const res = await syncDatabaseToGitHub(db, ghSyncSettings);
+
+      if (res.success) {
+        showBanner('GitHub Authorization successful! db.json has been committed directly to your repository.');
+      } else {
+        setFormError(`GitHub sync failed: ${res.error}`);
+      }
+    } catch (err: any) {
+      setFormError(`Connection failed: ${err.message || err}`);
+    } finally {
+      setIsSavingGhSync(false);
+    }
+  };
 
   // Fetch lists
   const currentPortfolio = portfolios.find(p => p.id === selectedPortfolioId) || portfolios[0];
@@ -776,6 +831,19 @@ export default function AdminPanel({
           <div className="flex items-center gap-2">
             <Cpu className="h-4 w-4" />
             AI Co-generation Playground
+          </div>
+        </button>
+        <button
+          onClick={() => setActiveTab('deployment')}
+          className={`pb-3.5 px-4 text-xs font-bold transition shrink-0 border-b-2 -mb-[2px] cursor-pointer ${
+            activeTab === 'deployment'
+              ? 'border-indigo-600 text-indigo-700'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <Github className="h-4 w-4" />
+            GitHub &amp; Vercel Sync
           </div>
         </button>
       </div>
@@ -1465,6 +1533,195 @@ export default function AdminPanel({
 
                 </div>
 
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: GITHUB & VERCEL AUTONOMOUS SYNC */}
+          {activeTab === 'deployment' && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Github className="h-5 w-5 text-indigo-600" />
+                  GitHub &amp; Vercel Static Sync Center
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+                  Modellportföljen is designed to work completely autonomously! This dashboard enables you to sync your portfolio state directly back to your GitHub repository's database file (<code>src/data/db.json</code>) at runtime, which triggers Vercel to rebuild and redeploy the live site within seconds.
+                </p>
+              </div>
+
+              {/* STATS / EXPLANATION GRID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
+                  <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <CheckCircle className="h-3.5 w-3.5 text-emerald-600" />
+                    How Local Storage Works
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    All administrative updates (portfolio listings, live trades, historical index curves) are saved <strong>instantly</strong> in your browser's Local Storage. You can review all of your changes right now on this device.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-indigo-100 bg-indigo-50/20 p-4">
+                  <h4 className="text-xs font-bold text-indigo-950 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                    <CloudLightning className="h-3.5 w-3.5 text-indigo-600" />
+                    Publishing to Readers
+                  </h4>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    For other readers to see your updates, the database file <code>src/data/db.json</code> needs to be updated in your GitHub repo. Vercel catches this push and updates your live web URL.
+                  </p>
+                </div>
+              </div>
+
+              {/* METHOD 1: SECURE AUTONOMOUS GITHUB API SYNC */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4">
+                <div className="flex justify-between items-start gap-4">
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 text-xs font-extrabold">1</span>
+                      Direct GitHub API Commit (Fully Automated)
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Enter a GitHub Personal Access Token (PAT) and repository details to commit <code>db.json</code> automatically from this admin panel. Credentials remain secure in your browser.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-xs font-bold text-slate-600">Active Sync:</span>
+                    <button
+                      type="button"
+                      onClick={handleToggleGitHubSync}
+                      className={`relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        ghSyncSettings.enabled ? 'bg-indigo-600' : 'bg-slate-200'
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                          ghSyncSettings.enabled ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* GITHUB DETAILS FORM */}
+                <div className="space-y-4 pt-2 border-t border-slate-100">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
+                        GitHub Personal Access Token (PAT)*
+                      </label>
+                      <input
+                        type="password"
+                        placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxx"
+                        value={ghSyncSettings.token}
+                        onChange={(e) => setGhSyncSettings(prev => ({ ...prev, token: e.target.value }))}
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-xs focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400 transition font-mono"
+                      />
+                      <span className="text-[9px] text-slate-400 mt-1 block">
+                        Requires <code>repo</code> contents write scope. Create one under Developer Settings on GitHub.
+                      </span>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
+                        GitHub Repository Path (owner/repo)*
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. jdoe/my-portfolios"
+                        value={ghSyncSettings.repo}
+                        onChange={(e) => setGhSyncSettings(prev => ({ ...prev, repo: e.target.value }))}
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-xs focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400 transition font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
+                        Target Branch Name
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. main"
+                        value={ghSyncSettings.branch}
+                        onChange={(e) => setGhSyncSettings(prev => ({ ...prev, branch: e.target.value }))}
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2.5 px-3 text-xs focus:border-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-400 transition font-mono"
+                      />
+                    </div>
+
+                    <div className="flex items-end">
+                      <button
+                        type="button"
+                        onClick={handleSaveAndTestSyncSettings}
+                        disabled={isSavingGhSync}
+                        className="w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold tracking-wider text-[11px] uppercase font-mono py-2.5 duration-150 transition cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
+                      >
+                        {isSavingGhSync ? (
+                          <>
+                            <span className="h-3 w-3 rounded-full border border-white border-t-transparent animate-spin" />
+                            Saving &amp; Testing...
+                          </>
+                        ) : (
+                          <>
+                            <GitBranch className="h-3.5 w-3.5" />
+                            Save &amp; Force Sync DB
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* METHOD 2: MANUAL EXPORT / BACKUP */}
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-slate-600 text-xs font-extrabold">2</span>
+                    Manual drag-and-drop file upload (Fail-safe Backup)
+                  </h4>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    If you prefer not to connect the GitHub API, you can manually export the latest database file and drag it into your repository on GitHub.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={downloadDatabaseJson}
+                    className="flex-1 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 py-3 text-xs font-bold transition flex items-center justify-center gap-2 bg-white cursor-pointer"
+                  >
+                    <Download className="h-4 w-4 text-slate-500" />
+                    Download Updated db.json
+                  </button>
+
+                  <div className="flex-1 bg-slate-50 rounded-xl border border-slate-200 border-dashed p-3 text-center text-[10px] text-slate-500 flex flex-col justify-center font-mono">
+                    <span>Path: <code>src/data/db.json</code></span>
+                    <span className="mt-0.5">Overwrite existing file in your repository.</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* STEP-BY-STEP IMPLEMENTATION INSTRUCTIONS */}
+              <div className="rounded-2xl border border-stone-200 bg-stone-50/50 p-5 space-y-3 text-left">
+                <h4 className="text-xs font-bold text-stone-800 uppercase tracking-widest font-mono">
+                  Deployment Instructions (GitHub + Vercel):
+                </h4>
+                <ol className="list-decimal list-inside text-xs text-stone-600 space-y-2 leading-relaxed">
+                  <li>
+                    <strong>Upload to GitHub:</strong> Commit and push this entire repository folder to your private or public GitHub account.
+                  </li>
+                  <li>
+                    <strong>Deploy to Vercel:</strong> Create a free project on Vercel, connect it to your GitHub repository, and click <strong>Deploy</strong>. Vercel will automatically host the static Single Page Application.
+                  </li>
+                  <li>
+                    <strong>Configure Sync:</strong> In the deployed live app, navigate back to this admin panel, open this tab, and configure your GitHub Token.
+                  </li>
+                  <li>
+                    <strong>Enjoy Autonomy:</strong> Whenever you modify portfolio details, log trades, or add weekly history points, your changes will commit directly to your GitHub repo, triggering Vercel to redeploy within ~30 seconds automatically!
+                  </li>
+                </ol>
               </div>
             </div>
           )}
