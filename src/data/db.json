@@ -1,0 +1,347 @@
+{
+  "portfolios": [
+    {
+      "id": "p1",
+      "name": "Swedish Small Cap & Growth",
+      "description": "An actively managed model portfolio focusing on Swedish small-cap and growth businesses combining strong earnings momentum with exceptional return on capital (ROC).",
+      "category": "Swedish Growth Sectors",
+      "risk_profile": "High Risk",
+      "target_subscription_tier": "small",
+      "currency": "SEK"
+    },
+    {
+      "id": "p2",
+      "name": "Global Dividend Champions",
+      "description": "A defensive, resilient model selection of global dividend champions offering persistent cash flows, dominant market share, and growing distributions.",
+      "category": "Global Dividends",
+      "risk_profile": "Low-Medium Risk",
+      "target_subscription_tier": "small",
+      "currency": "USD"
+    }
+  ],
+  "holdings": [
+    {
+      "id": "h1",
+      "portfolio_id": "p1",
+      "ticker": "VOLV B",
+      "company_name": "Volvo AB",
+      "allocation_pct": 25,
+      "avg_purchase_price": 270.5,
+      "current_price": 295.2,
+      "currency": "SEK"
+    },
+    {
+      "id": "h2",
+      "portfolio_id": "p1",
+      "ticker": "INVE B",
+      "company_name": "Investor AB",
+      "allocation_pct": 30,
+      "avg_purchase_price": 248,
+      "current_price": 286.4,
+      "currency": "SEK"
+    },
+    {
+      "id": "h3",
+      "portfolio_id": "p1",
+      "ticker": "EVO",
+      "company_name": "Evolution AB",
+      "allocation_pct": 15,
+      "avg_purchase_price": 980,
+      "current_price": 1145,
+      "currency": "SEK"
+    },
+    {
+      "id": "h4",
+      "portfolio_id": "p1",
+      "ticker": "ATCO A",
+      "company_name": "Atlas Copco AB",
+      "allocation_pct": 20,
+      "avg_purchase_price": 162,
+      "current_price": 184.8,
+      "currency": "SEK"
+    },
+    {
+      "id": "h5",
+      "portfolio_id": "p1",
+      "ticker": "AZN",
+      "company_name": "AstraZeneca PLC",
+      "allocation_pct": 10,
+      "avg_purchase_price": 1240,
+      "current_price": 1320,
+      "currency": "SEK"
+    },
+    {
+      "id": "h6",
+      "portfolio_id": "p2",
+      "ticker": "MSFT",
+      "company_name": "Microsoft Corp",
+      "allocation_pct": 25,
+      "avg_purchase_price": 410.5,
+      "current_price": 423.6,
+      "currency": "USD"
+    },
+    {
+      "id": "h7",
+      "portfolio_id": "p2",
+      "ticker": "NOVO B",
+      "company_name": "Novo Nordisk A/S",
+      "allocation_pct": 20,
+      "avg_purchase_price": 850,
+      "current_price": 890.3,
+      "currency": "DKK"
+    },
+    {
+      "id": "h8",
+      "portfolio_id": "p2",
+      "ticker": "NEST",
+      "company_name": "Nestlé S.A.",
+      "allocation_pct": 15,
+      "avg_purchase_price": 94.2,
+      "current_price": 91.8,
+      "currency": "CHF"
+    },
+    {
+      "id": "h9",
+      "portfolio_id": "p2",
+      "ticker": "KO",
+      "company_name": "The Coca-Cola Co",
+      "allocation_pct": 20,
+      "avg_purchase_price": 58.4,
+      "current_price": 61.2,
+      "currency": "USD"
+    },
+    {
+      "id": "h10",
+      "portfolio_id": "p2",
+      "ticker": "REXT",
+      "company_name": "Realty Income Corp",
+      "allocation_pct": 20,
+      "avg_purchase_price": 52.1,
+      "current_price": 54.5,
+      "currency": "USD"
+    }
+  ],
+  "trades": [
+    {
+      "id": "t1",
+      "portfolio_id": "p1",
+      "timestamp": "2026-05-24T14:30:00Z",
+      "type": "BUY",
+      "ticker": "VOLV B",
+      "price": 270.5,
+      "analysis_text": "Volvo AB displays strong pricing power, resilient demand in the heavy commercial vehicles sector, and a very robust order book. With a forward dividend yield of over 6% and solid net cash balance, this represents a low-risk, high-quality industrial compounder. The valuation at P/E 11.5x is highly attractive.",
+      "currency": "SEK"
+    },
+    {
+      "id": "t2",
+      "portfolio_id": "p1",
+      "timestamp": "2026-04-18T09:15:00Z",
+      "type": "BUY",
+      "ticker": "INVE B",
+      "price": 248,
+      "analysis_text": "Investor AB offers premier exposure to the best of Swedish industry (Atlas Copco, SEB, ABB, AstraZeneca) alongside an outstanding unlisted portfolio (Patricia Industries). We initiated this position at an attractive Net Asset Value (NAV) discount of 16.5%, allowing us to buy top-tier compounding assets at deep discounts.",
+      "currency": "SEK"
+    },
+    {
+      "id": "t3",
+      "portfolio_id": "p1",
+      "timestamp": "2026-04-05T11:00:00Z",
+      "type": "SELL",
+      "ticker": "HM B",
+      "price": 158.2,
+      "analysis_text": "We have liquidated our entire position in H&M. The fast-fashion landscape is undergoing structural shifts with rising cost pressures, direct-from-China digital giants expanding rapidly, and rising inventory levels. Reallocating this capital into higher-conviction industrial leaders.",
+      "currency": "SEK"
+    },
+    {
+      "id": "t4",
+      "portfolio_id": "p1",
+      "timestamp": "2026-03-12T13:45:00Z",
+      "type": "BUY",
+      "ticker": "EVO",
+      "price": 980,
+      "analysis_text": "Evolution AB is the undisputed digital monopolist of Live Casino gaming. Generating an EBITDA margin exceeding 70% and a free cash flow conversion Rate close to 100%, its business model is unparalleled. Initiating a 15% model allocation following a healthy market correction.",
+      "currency": "SEK"
+    },
+    {
+      "id": "t5",
+      "portfolio_id": "p2",
+      "timestamp": "2026-05-28T10:00:00Z",
+      "type": "BUY",
+      "ticker": "MSFT",
+      "price": 410.5,
+      "analysis_text": "Microsoft offers outstanding free cash flows supported by extensive leadership in Enterprise SaaS and generative AI across Azure and Copilot workspace integration. Despite premium multiples, structural competitive moats remain dominant.",
+      "currency": "USD"
+    },
+    {
+      "id": "t6",
+      "portfolio_id": "p2",
+      "timestamp": "2026-05-15T09:00:00Z",
+      "type": "BUY",
+      "ticker": "NOVO B",
+      "price": 850,
+      "analysis_text": "Novo Nordisk continues to dominate the global market for GLP-1 therapeutics (Ozempic/Wegovy). We expand our allocation during a temporary pricing consolidation, as long-term market dynamics and pipeline growth remain monumental.",
+      "currency": "DKK"
+    },
+    {
+      "id": "t7",
+      "portfolio_id": "p2",
+      "timestamp": "2026-05-02T16:20:00Z",
+      "type": "BUY",
+      "ticker": "REXT",
+      "price": 52.1,
+      "analysis_text": "Realty Income offers highly predictable monthly cash distributions. Backed by tens of thousands of master-triple-net commercial lease agreements, it acts as a highly resilient defensive anchor.",
+      "currency": "USD"
+    }
+  ],
+  "history": [
+    {
+      "id": "ph1",
+      "portfolio_id": "p1",
+      "timestamp": "2026-04-10",
+      "index_value": 100,
+      "note": "Portfolio initiation and initial capital allocation"
+    },
+    {
+      "id": "ph2",
+      "portfolio_id": "p1",
+      "timestamp": "2026-04-17",
+      "index_value": 103.5,
+      "note": "Market rally supported by major industrial compounders"
+    },
+    {
+      "id": "ph3",
+      "portfolio_id": "p1",
+      "timestamp": "2026-04-24",
+      "index_value": 101.2,
+      "note": "Healthy consolidated profit-taking across technology holdings"
+    },
+    {
+      "id": "ph4",
+      "portfolio_id": "p1",
+      "timestamp": "2026-05-01",
+      "index_value": 106.8,
+      "note": "Blockbuster Q1 reports lift major holdings Investor B and Volvo AB"
+    },
+    {
+      "id": "ph5",
+      "portfolio_id": "p1",
+      "timestamp": "2026-05-08",
+      "index_value": 109.4,
+      "note": "Increased position sizing in industrial value compounders"
+    },
+    {
+      "id": "ph6",
+      "portfolio_id": "p1",
+      "timestamp": "2026-05-15",
+      "index_value": 112.1,
+      "note": "Evolution AB gains momentum backed by impressive volume trends"
+    },
+    {
+      "id": "ph7",
+      "portfolio_id": "p1",
+      "timestamp": "2026-05-22",
+      "index_value": 110.5,
+      "note": "Minor index consolidation across the Swedish equity market"
+    },
+    {
+      "id": "ph8",
+      "portfolio_id": "p1",
+      "timestamp": "2026-05-29",
+      "index_value": 116.8,
+      "note": "Favorable Purchasing Managers Index (PMI) sparks momentum in manufacturing sectors"
+    },
+    {
+      "id": "ph9",
+      "portfolio_id": "p1",
+      "timestamp": "2026-06-03",
+      "index_value": 119.5,
+      "note": "Reinvested capital distributions, achieving fresh all-time high portfolio value"
+    },
+    {
+      "id": "ph10",
+      "portfolio_id": "p2",
+      "timestamp": "2026-04-10",
+      "index_value": 100,
+      "note": "Model initiation & core position loading"
+    },
+    {
+      "id": "ph11",
+      "portfolio_id": "p2",
+      "timestamp": "2026-04-17",
+      "index_value": 100.8,
+      "note": "US Dollar momentum provides dynamic tailwinds to foreign holdings"
+    },
+    {
+      "id": "ph12",
+      "portfolio_id": "p2",
+      "timestamp": "2026-04-24",
+      "index_value": 101.5,
+      "note": "Resilient quarterly prints from PepsiCo and Coca-Cola confirm consumer strength"
+    },
+    {
+      "id": "ph13",
+      "portfolio_id": "p2",
+      "timestamp": "2026-05-01",
+      "index_value": 102.1,
+      "note": "Nestlé premiumization strategies drive favorable organic volume growth"
+    },
+    {
+      "id": "ph14",
+      "portfolio_id": "p2",
+      "timestamp": "2026-05-08",
+      "index_value": 101.9,
+      "note": "Labor updates have negligible near-term margin impacts"
+    },
+    {
+      "id": "ph15",
+      "portfolio_id": "p2",
+      "timestamp": "2026-05-15",
+      "index_value": 103.4,
+      "note": "Novo Nordisk adjusts full-year expectations upward on strong GLP-1 demand"
+    },
+    {
+      "id": "ph16",
+      "portfolio_id": "p2",
+      "timestamp": "2026-05-22",
+      "index_value": 104.2,
+      "note": "Stable occupancy metrics at Realty Income support distribution outlook"
+    },
+    {
+      "id": "ph17",
+      "portfolio_id": "p2",
+      "timestamp": "2026-05-29",
+      "index_value": 105.1,
+      "note": "Microsoft accelerates generative AI stack distribution across enterprise"
+    },
+    {
+      "id": "ph18",
+      "portfolio_id": "p2",
+      "timestamp": "2026-06-03",
+      "index_value": 106.7,
+      "note": "Latest macroeconomic rate adjustments align with our defensive asset stance"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "user-ajellvik",
+      "email": "ajellvik@gmail.com",
+      "subscription_tier": "large",
+      "updated_at": "2026-06-03T00:00:00Z"
+    },
+    {
+      "id": "user-demo",
+      "email": "demo@example.com",
+      "subscription_tier": "none",
+      "updated_at": "2026-06-03T00:00:00Z"
+    },
+    {
+      "id": "admin-user-id",
+      "email": "admin@modelportfolio.se",
+      "subscription_tier": "large",
+      "updated_at": "2026-06-03T00:00:00Z"
+    }
+  ],
+  "settings": {
+    "paywalls_enabled": false
+  }
+}

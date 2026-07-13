@@ -1,0 +1,6 @@
+{
+  "name": "Seneca Capital Model Portfolios",
+  "description": "A high-performance premium web platform for subscribing to private model investment portfolios with trade history, pricing tiers, and admin controls.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

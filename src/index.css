@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-brand-cyan: #a6ecff;
+  --color-brand-purple: #c084fc;
+  --color-cosmic-black: #01030a;
+  --color-cosmic-gray: #0b1120;
+
+  --color-rg-orange: #c35232;
+  --color-rg-green: #143d30;
+  --color-rg-cream: #fbfaf7;
+  --color-rg-clay: #a63f22;
+  --color-rg-clay-light: #fdf5f2;
+}
+
+body {
+  background-color: var(--color-rg-cream);
+  color: #1c1917;
+  font-family: var(--font-sans);
+}
+
+/* Custom Cosmic Glow & Grid lines */
+.cosmic-grid {
+  background-image: 
+    linear-gradient(to right, rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+  background-size: 3.5rem 3.5rem;
+}
+
+.radial-cosmic-glow-cyan {
+  background: radial-gradient(circle 400px at 50% 30%, rgba(166, 236, 255, 0.08) 0%, transparent 100%);
+}
+
+.radial-cosmic-glow-purple {
+  background: radial-gradient(circle 350px at 80% 20%, rgba(192, 132, 252, 0.06) 0%, transparent 100%);
+}
+
+/* Glassmorphism panel definitions matching Google Antigravity */
+.antigravity-glass {
+  background: rgba(11, 17, 32, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.antigravity-glass-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.antigravity-glass-hover:hover {
+  background: rgba(11, 17, 32, 0.85);
+  border-color: rgba(166, 236, 255, 0.25);
+  box-shadow: 0 0 25px rgba(166, 236, 255, 0.1);
+}
+
+/* Glowing text and indicator dots */
+.glow-text-cyan {
+  text-shadow: 0 0 10px rgba(166, 236, 255, 0.5);
+}
+
+.glow-border-cyan {
+  box-shadow: 0 0 15px rgba(166, 236, 255, 0.15);
+  border-color: rgba(166, 236, 255, 0.3);
+}
+
+.glow-text-purple {
+  text-shadow: 0 0 10px rgba(192, 132, 252, 0.5);
+}
+
+/* Ambient wobbly floating effect */
+@keyframes antigravity-gently-float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-gently-float {
+  animation: antigravity-gently-float 6s ease-in-out infinite;
+}
+
+@keyframes slow-orbit-path {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-orbit-path {
+  animation: slow-orbit-path 40s linear infinite;
+}
+
+/* High contrast custom scrollbar definition */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #fbfbfa;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Quick selections styling */
+::selection {
+  background-color: #fce8e2;
+  color: #c35232;
+}
+
+/* Draggable item pointer styles during physics simulations */
+.physics-floating {
+  position: absolute;
+  z-index: 50;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  will-change: transform;
+}
+.physics-floating:active {
+  cursor: grabbing;
+}
